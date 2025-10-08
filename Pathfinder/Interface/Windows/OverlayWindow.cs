@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Numerics;
 
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 
 using Dalamud.Plugin.Services;
 using Dalamud.Interface.Windowing;

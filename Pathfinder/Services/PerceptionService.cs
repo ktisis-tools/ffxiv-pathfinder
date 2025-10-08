@@ -6,7 +6,7 @@ using Dalamud.Interface;
 using Dalamud.Plugin.Services;
 using CameraManager = FFXIVClientStructs.FFXIV.Client.Graphics.Scene.CameraManager;
 
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 
 using Pathfinder.Services.Core.Attributes;
 

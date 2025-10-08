@@ -1,4 +1,4 @@
-﻿using ImGuiNET;
+﻿using Dalamud.Bindings.ImGui;
 
 using Pathfinder.Config;
 using Pathfinder.Config.Data;

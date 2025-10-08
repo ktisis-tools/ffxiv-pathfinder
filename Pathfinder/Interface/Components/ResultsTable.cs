@@ -3,7 +3,7 @@ using System.Linq;
 using System.Numerics;
 using System.Collections.Generic;
 
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 
 using Pathfinder.Config;
 using Pathfinder.Interface.Shared;

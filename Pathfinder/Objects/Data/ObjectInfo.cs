@@ -7,7 +7,6 @@ using Object = FFXIVClientStructs.FFXIV.Client.Graphics.Scene.Object;
 using ModelType = FFXIVClientStructs.FFXIV.Client.Graphics.Scene.CharacterBase.ModelType;
 
 using Pathfinder.Config.Data;
-using Pathfinder.Interop.Structs;
 using Pathfinder.Interop.Unmanaged;
 
 namespace Pathfinder.Objects.Data;
@@ -88,7 +87,7 @@ public class ObjectInfo {
 	// BgObject handler
 
 	private unsafe void ReadBgObject(Pointer<BgObject> ptr) {
-		var resource = ptr.Data->ResourceHandle;
+		var resource = ptr.Data->ModelResourceHandle;
 		if (resource != null)
 			this.AddModel(resource->FileName.ToString());
 	}
