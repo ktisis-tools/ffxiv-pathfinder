@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Numerics;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 using FFXIVClientStructs.FFXIV.Client.System.Resource.Handle;
@@ -10,6 +9,7 @@ using Object = FFXIVClientStructs.FFXIV.Client.Graphics.Scene.Object;
 using ModelType = FFXIVClientStructs.FFXIV.Client.Graphics.Scene.CharacterBase.ModelType;
 
 using Pathfinder.Config.Data;
+using Pathfinder.Interop;
 using Pathfinder.Interop.Unmanaged;
 
 namespace Pathfinder.Objects.Data;
@@ -108,27 +108,17 @@ public class ObjectInfo {
 	}
 	
 	// VfxObject handler
-	[StructLayout(LayoutKind.Explicit, Size = 0x340)]
-	public struct VfxObject {
-		[FieldOffset(0)] public Object Object;
-
-		[FieldOffset(0x260)] public Vector4 Color;
-
-		[FieldOffset(0x2A0)] public unsafe VfxResourceInstance* ResourceInstance;
-	}
-	[StructLayout(LayoutKind.Explicit, Size = 0xC0)]
-	public struct VfxResourceInstance {
-		[FieldOffset(0)] public unsafe nint* __vfTable;
-
-		[FieldOffset(0x60)] public unsafe ResourceHandle* Handle;
-	}
 
 	private unsafe void ReadVfx(Pointer<VfxObject> ptr) {
-		var instance = ptr.Data->ResourceInstance;
-		if (instance == null) return;
-		var resource = instance->Handle;
-		if (resource != null)
-			this.AddModel(resource->FileName.ToString());
+		var resourceInstance = ptr.Data->ResourceInstance;
+		if (resourceInstance == null) return;
+		var resourceUnk = resourceInstance->ResourceUnk;
+		if (resourceUnk == null) return;
+		var apricot = resourceUnk->ApricotResourceHandle;
+		if (apricot == null) return;
+
+		var resource = &apricot->Handle;
+		this.AddModel(resource->FileName.ToString());
 	}
 	
 	// CharacterBase handler

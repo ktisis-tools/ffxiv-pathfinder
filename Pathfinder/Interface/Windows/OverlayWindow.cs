@@ -22,7 +22,7 @@ namespace Pathfinder.Interface.Windows;
 
 [LocalService]
 public class OverlayWindow : Window, IDisposable {
-	private const string RePattern = @"\/[^\/]*\.mdl";
+	private const string RePattern = @"\/[^\/]*\.(mdl|avfx)";
 	private readonly ObjectUiCtx _ctx;
 	
 	private readonly ConfigService _config;

@@ -18,7 +18,7 @@ public sealed class Pathfinder : IDalamudPlugin {
 
 	// Services
 
-	private readonly IPluginLog _log;
+	public static IPluginLog Log { get; private set; } = null!;
 	private readonly ServiceProvider _services;
 	
 	// Ctor & Initialization
@@ -27,7 +27,7 @@ public sealed class Pathfinder : IDalamudPlugin {
 		IDalamudPluginInterface api,
 		IPluginLog log
 	) {
-		this._log = log;
+		Log = log;
 		
 		try {
 			using var factory = new ServiceFactory(log);
@@ -54,7 +54,7 @@ public sealed class Pathfinder : IDalamudPlugin {
 		try {
 			this._services.Dispose();
 		} catch (Exception err) {
-			this._log.Error($"Failed to dispose:\n{err}");
+			Pathfinder.Log.Error($"Failed to dispose:\n{err}");
 		}
 	}
 }
