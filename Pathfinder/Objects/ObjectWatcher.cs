@@ -46,7 +46,7 @@ public class ObjectWatcher : IDisposable {
 		if (!this.IsEnabled) return;
 
 		var objects = this.RecurseWorld()
-			.Where(obj => obj.ObjectType is ObjectType.BgObject or ObjectType.Terrain or ObjectType.CharacterBase)
+			.Where(obj => obj.ObjectType is ObjectType.BgObject or ObjectType.Terrain or ObjectType.CharacterBase or ObjectType.VfxObject)
 			.Select(obj => obj.GetObjectInfo());
 		
 		this.OnObjectsUpdated?.Invoke(this, objects);

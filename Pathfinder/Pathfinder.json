@@ -12,6 +12,7 @@
 		"resources",
 		"models",
 		"paths",
-		"mdl"
+		"mdl",
+        "avfx"
 	]
 }
