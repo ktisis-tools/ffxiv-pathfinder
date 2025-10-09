@@ -27,7 +27,7 @@ public class ConfigFile : IPluginConfiguration {
 	public readonly static Dictionary<WorldObjectType, uint> DefaultColors = new() {
 		{ WorldObjectType.BgObject, 0xFFFF87B1 },
 		{ WorldObjectType.Terrain, 0xFFE87D4E },
-		{ WorldObjectType.Vfx, 0xFF68EDFF },
+		{ WorldObjectType.Vfx, 0xFF6804EA },
 		{ WorldObjectType.Human, 0xFF7FE946 },
 		{ WorldObjectType.DemiHuman, 0xFF5E8EFF },
 		{ WorldObjectType.Monster, 0xFF4D3DFF },

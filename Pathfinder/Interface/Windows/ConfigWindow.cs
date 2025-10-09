@@ -139,6 +139,7 @@ public class ConfigWindow : Window {
 		ImGui.Text("Objects:");
 		DrawColor(cfg, WorldObjectType.Terrain);
 		DrawColor(cfg, WorldObjectType.BgObject);
+		DrawColor(cfg, WorldObjectType.Vfx);
 		
 		ImGui.Spacing();
 		
