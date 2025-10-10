@@ -4,7 +4,7 @@ using System.Numerics;
 using System.Text.RegularExpressions;
 
 using Dalamud.Bindings.ImGui;
-
+using Dalamud.Interface.Utility.Raii;
 using Dalamud.Plugin.Services;
 using Dalamud.Interface.Windowing;
 
@@ -143,17 +143,15 @@ public class OverlayWindow : Window, IDisposable {
 		var paths = info.Models.Select(mdl => mdl.Path).ToList();
         
 		var color = dot.ColorOverride ? dot.Color : config.GetColor(info.FilterType);
-		ImGui.BeginTooltip();
-		ImGui.PushStyleColor(ImGuiCol.Text, color);
-		ImGui.Text($"{info.GetItemTypeString()} ({info.Distance.ToString("0.00")}y)");
-		foreach (var path in paths) {
-			Match m = Regex.Match(path, RePattern);
-			if (m.Success)
-				ImGui.Text($"  ...{m.Value}");
+		using (ImRaii.Tooltip()) {
+			using var _col = ImRaii.PushColor(ImGuiCol.Text, color);
+			ImGui.Text($"{info.GetItemTypeString()} ({info.Distance.ToString("0.00")}y)");
+			foreach (var path in paths) {
+				Match m = Regex.Match(path, RePattern);
+				if (m.Success)
+					ImGui.Text($"  ...{m.Value}");
+			}
 		}
-
-		ImGui.PopStyleColor();
-		ImGui.EndTooltip();
 		
 		ImGui.SetNextFrameWantCaptureMouse(true);
 		if (ImGui.IsMouseClicked(ImGuiMouseButton.Left))

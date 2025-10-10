@@ -1,6 +1,7 @@
 ﻿using Dalamud.Interface;
 
 using Dalamud.Bindings.ImGui;
+using Dalamud.Interface.Utility.Raii;
 
 using Pathfinder.Config;
 using Pathfinder.Config.Data;
@@ -49,10 +50,9 @@ public class RangeControls {
 	) {
 		const FontAwesomeIcon OnIcon = FontAwesomeIcon.Eye;
 		const FontAwesomeIcon OffIcon = FontAwesomeIcon.EyeSlash;
-		
 		var spacing = ImGui.GetStyle().ItemInnerSpacing.X;
-		
-		ImGui.BeginGroup();
+		var changed = false;
+		using var _group = ImRaii.Group();
 
 		var dragWidth = ImGui.GetFontSize() * 3.5f;
 		var drawWidth = Buttons.CalcIconToggleSize(OnIcon, OffIcon).X;
@@ -61,30 +61,28 @@ public class RangeControls {
 		ImGui.Checkbox($"{id}_Toggle", ref control.Enabled);
 		if (toggleTooltip != null)
 			Helpers.HoverTooltip(toggleTooltip);
-		
-		ImGui.BeginDisabled(!control.Enabled);
-		ImGui.SameLine(0, spacing);
-		
-		// Value slider
-		ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X - dragWidth - drawWidth - spacing * 2);
-		var changed = ImGui.SliderFloat($"{id}_Slider", ref control.Value, 0.01f, 100.0f, slideText, ImGuiSliderFlags.NoInput);
-		ImGui.SameLine(0, spacing);
 
-		// Value drag
-		ImGui.SetNextItemWidth(dragWidth);
-		ImGui.DragFloat($"{id}_Drag", ref control.Value, 0.01f, 0.01f, 100.0f, fmt);
-		ImGui.SameLine(0, spacing);
+		using (ImRaii.Disabled(!control.Enabled)) {
+			ImGui.SameLine(0, spacing);
 		
-		// Overlay toggle
-		ImGui.BeginDisabled(!uiEnabled);
-		Buttons.IconToggleButtonColored($"{id}_Toggle_Draw", ref draw, OnIcon, OffIcon);
-		if (drawTooltip != null)
-			Helpers.HoverTooltip(drawTooltip);
-		ImGui.EndDisabled();
+			// Value slider
+			ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X - dragWidth - drawWidth - spacing * 2);
+			changed |= ImGui.SliderFloat($"{id}_Slider", ref control.Value, 0.01f, 100.0f, slideText, ImGuiSliderFlags.NoInput);
+			ImGui.SameLine(0, spacing);
+
+			// Value drag
+			ImGui.SetNextItemWidth(dragWidth);
+			changed |= ImGui.DragFloat($"{id}_Drag", ref control.Value, 0.01f, 0.01f, 100.0f, fmt);
+			ImGui.SameLine(0, spacing);
 		
-		ImGui.EndDisabled();
+			// Overlay toggle
+			using (ImRaii.Disabled(!uiEnabled)) {
+				Buttons.IconToggleButtonColored($"{id}_Toggle_Draw", ref draw, OnIcon, OffIcon);
+				if (drawTooltip != null)
+					Helpers.HoverTooltip(drawTooltip);
+			}
+		}
 		
-		ImGui.EndGroup();
 		return changed;
 	}
 }

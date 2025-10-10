@@ -4,33 +4,26 @@ using System.Numerics;
 using Dalamud.Interface;
 
 using Dalamud.Bindings.ImGui;
+using Dalamud.Interface.Utility.Raii;
 
 namespace Pathfinder.Interface.Widgets; 
 
 public static class Buttons {
 	public static Vector2 CalcIconSize(FontAwesomeIcon icon) {
-		ImGui.PushFont(UiBuilder.IconFont);
-		try {
+		using (ImRaii.PushFont(UiBuilder.IconFont))
 			return ImGui.CalcTextSize(icon.ToIconString());
-		} finally {
-			ImGui.PopFont();
-		}
 	}
 	
 	public static bool IconButton(string id, FontAwesomeIcon icon, Vector2? size = null) {
-		ImGui.PushFont(UiBuilder.IconFont);
-		try {
+		using (ImRaii.PushFont(UiBuilder.IconFont)) {
 			size ??= CalcIconButtonSize(icon);
-			ImGui.BeginGroup();
+			using var _group = ImRaii.Group();
 			var cX = ImGui.GetCursorPosX();
 			var result = ImGui.Button(id, size.Value);
 			ImGui.SameLine(0, 0);
 			ImGui.SetCursorPosX(cX + (size.Value.X - CalcIconSize(icon).X) / 2);
 			ImGui.Text(icon.ToIconString());
-			ImGui.EndGroup();
 			return result;
-		} finally {
-			ImGui.PopFont();
 		}
 	}
 	
