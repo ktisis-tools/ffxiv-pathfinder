@@ -3,11 +3,13 @@ using System.Numerics;
 using System.Collections.Generic;
 
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
+using FFXIVClientStructs.FFXIV.Client.System.Resource.Handle;
+
 using Object = FFXIVClientStructs.FFXIV.Client.Graphics.Scene.Object;
 using ModelType = FFXIVClientStructs.FFXIV.Client.Graphics.Scene.CharacterBase.ModelType;
 
 using Pathfinder.Config.Data;
-using Pathfinder.Interop.Structs;
+using Pathfinder.Interop;
 using Pathfinder.Interop.Unmanaged;
 
 namespace Pathfinder.Objects.Data;
@@ -62,6 +64,10 @@ public class ObjectInfo {
 				this.ReadTerrain(ptr.Cast<Terrain>());
 				this.FilterType = WorldObjectType.Terrain;
 				break;
+			case ObjectType.VfxObject:
+				this.ReadVfx(ptr.Cast<VfxObject>());
+				this.FilterType = WorldObjectType.Vfx;
+				break;
 			case ObjectType.CharacterBase:
 				this.ReadCharaBase(ptr.Cast<CharacterBase>());
 				this.FilterFlags = WorldObjectType.Chara;
@@ -88,7 +94,7 @@ public class ObjectInfo {
 	// BgObject handler
 
 	private unsafe void ReadBgObject(Pointer<BgObject> ptr) {
-		var resource = ptr.Data->ResourceHandle;
+		var resource = ptr.Data->ModelResourceHandle;
 		if (resource != null)
 			this.AddModel(resource->FileName.ToString());
 	}
@@ -99,6 +105,20 @@ public class ObjectInfo {
 		var resource = ptr.Data->ResourceHandle;
 		if (resource != null)
 			this.AddModel(resource->FileName.ToString());
+	}
+	
+	// VfxObject handler
+
+	private unsafe void ReadVfx(Pointer<VfxObject> ptr) {
+		var resourceInstance = ptr.Data->ResourceInstance;
+		if (resourceInstance == null) return;
+		var resourceUnk = resourceInstance->ResourceUnk;
+		if (resourceUnk == null) return;
+		var apricot = resourceUnk->ApricotResourceHandle;
+		if (apricot == null) return;
+
+		var resource = &apricot->Handle;
+		this.AddModel(resource->FileName.ToString());
 	}
 	
 	// CharacterBase handler

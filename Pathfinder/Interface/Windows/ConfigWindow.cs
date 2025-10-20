@@ -4,7 +4,8 @@ using System.Numerics;
 using Dalamud.Interface;
 using Dalamud.Interface.Windowing;
 
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
+using Dalamud.Interface.Utility.Raii;
 
 using Pathfinder.Config;
 using Pathfinder.Config.Data;
@@ -139,6 +140,7 @@ public class ConfigWindow : Window {
 		ImGui.Text("Objects:");
 		DrawColor(cfg, WorldObjectType.Terrain);
 		DrawColor(cfg, WorldObjectType.BgObject);
+		DrawColor(cfg, WorldObjectType.Vfx);
 		
 		ImGui.Spacing();
 		
@@ -161,10 +163,12 @@ public class ConfigWindow : Window {
 	}
 
 	private bool ResetToDefault(string id) {
+		var result = false;
 		var shift = ImGui.IsKeyDown(ImGuiKey.ModShift);
-		ImGui.BeginDisabled(!shift);
-		var result = Buttons.IconButton(id, FontAwesomeIcon.Undo);
-		ImGui.EndDisabled();
+
+		using (ImRaii.Disabled(!shift))
+			result = Buttons.IconButton(id, FontAwesomeIcon.Undo);
+
 		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
 		Helpers.HoverTooltip("Reset to default (Hold shift to press)");
 		return result;

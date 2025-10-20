@@ -1,16 +1,16 @@
 ﻿using Dalamud.Interface;
 
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
+using Dalamud.Interface.Utility.Raii;
 
 namespace Pathfinder.Interface.Widgets; 
 
 public static class Helpers {
 	public static void Hint(string text, FontAwesomeIcon icon = FontAwesomeIcon.QuestionCircle) {
-		ImGui.PushFont(UiBuilder.IconFont);
-		ImGui.PushStyleColor(ImGuiCol.Text, 0x80FFFFFF);
-		ImGui.Text(icon.ToIconString());
-		ImGui.PopStyleColor();
-		ImGui.PopFont();
+		using (ImRaii.PushFont(UiBuilder.IconFont))
+			using (ImRaii.PushColor(ImGuiCol.Text, 0x80FFFFFF))
+				ImGui.Text(icon.ToIconString());
+
 		HoverTooltip(text);
 	}
 	

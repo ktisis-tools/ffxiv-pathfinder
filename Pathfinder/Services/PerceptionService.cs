@@ -6,7 +6,7 @@ using Dalamud.Interface;
 using Dalamud.Plugin.Services;
 using CameraManager = FFXIVClientStructs.FFXIV.Client.Graphics.Scene.CameraManager;
 
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 
 using Pathfinder.Services.Core.Attributes;
 
@@ -47,7 +47,7 @@ public class PerceptionService {
 
 	public void SetClipboardAddress(nint address) => this.SetClipboard("Address copied to clipboard:", address.ToString("X"));
 
-	public void SetClipboardPath(string path) => this.SetClipboard("Model path copied to clipboard:", path, "\n");
+	public void SetClipboardPath(string path) => this.SetClipboard("Path copied to clipboard:", path, "\n");
 
 	private void SetClipboard(string? msg, string content, string delim = " ") {
 		ImGui.SetClipboardText(content);

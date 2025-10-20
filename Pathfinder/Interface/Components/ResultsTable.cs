@@ -3,7 +3,8 @@ using System.Linq;
 using System.Numerics;
 using System.Collections.Generic;
 
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
+using Dalamud.Interface.Utility.Raii;
 
 using Pathfinder.Config;
 using Pathfinder.Interface.Shared;
@@ -40,33 +41,28 @@ public class ResultsTable {
 	
 	// UI Draw
 
-	public void Draw(IObjectClient client, ConfigFile config, uint id = 0x0B75) {
-		var avail = ImGui.GetContentRegionAvail();
-		if (ImGui.BeginChildFrame(id, avail)) {
-			this.DrawTable(client, config);
-			ImGui.EndChildFrame();
-		}
+	public void Draw(IObjectClient client, ConfigFile config) {
+		using var _frame = ImRaii.Child("##ObjectSearchFrame", ImGui.GetContentRegionAvail(), false);
+		this.DrawTable(client, config);
 	}
 
 	private void DrawTable(IObjectClient client, ConfigFile config) {
+		ImGui.Spacing();
         var avail = ImGui.GetContentRegionAvail();
-		if (avail.X < 1.0f || avail.Y < 1.0f) return;
 		
 		const ImGuiTableFlags TableFlags = ImGuiTableFlags.RowBg | ImGuiTableFlags.Sortable | ImGuiTableFlags.Resizable | ImGuiTableFlags.Reorderable | ImGuiTableFlags.ScrollX;
-		ImGui.BeginTable("##ObjectSearchTable", 4, TableFlags);
-        try {
-			ImGui.TableSetupColumn("Distance", ImGuiTableColumnFlags.DefaultSort, avail.X * 0.125f);
-			ImGui.TableSetupColumn("Type", ImGuiTableColumnFlags.None, avail.X * 0.175f);
-			ImGui.TableSetupColumn("Address", config.Table.ShowAddress ? ImGuiTableColumnFlags.None : ImGuiTableColumnFlags.Disabled, avail.X * 0.125f);
-			ImGui.TableSetupColumn("Paths", ImGuiTableColumnFlags.WidthStretch, avail.X * 0.7f);
-			ImGui.TableHeadersRow();
+		using var table = ImRaii.Table("##ObjectSearchTable", 4, TableFlags);
+		if (!table.Success) return;
 
-			var objects = client.GetObjects().ToList();
-			this.SortTable(ImGui.TableGetSortSpecs().Specs, objects);
-			objects.ForEach(item => DrawObjectEntry(config, item));
-		} finally {
-			ImGui.EndTable();
-		}
+		ImGui.TableSetupColumn("Distance", ImGuiTableColumnFlags.DefaultSort, avail.X * 0.125f);
+		ImGui.TableSetupColumn("Type", ImGuiTableColumnFlags.None, avail.X * 0.175f);
+		ImGui.TableSetupColumn("Address", config.Table.ShowAddress ? ImGuiTableColumnFlags.None : ImGuiTableColumnFlags.Disabled, avail.X * 0.125f);
+		ImGui.TableSetupColumn("Paths", ImGuiTableColumnFlags.WidthStretch, avail.X * 0.7f);
+		ImGui.TableHeadersRow();
+
+		var objects = client.GetObjects().ToList();
+		this.SortTable(ImGui.TableGetSortSpecs().Specs, objects);
+		objects.ForEach(item => DrawObjectEntry(config, item));
 	}
 
 	private void DrawObjectEntry(ConfigFile config, ObjectInfo info) {
@@ -75,6 +71,7 @@ public class ResultsTable {
 		
 		ImGui.TableNextRow();
 
+		// todo: fix pushpop styling here
 		if (useColors) {
 			var color = config.GetColor(info.FilterType);
 			ImGui.PushStyleColor(ImGuiCol.Text, color);
@@ -165,17 +162,13 @@ public class ResultsTable {
 	private bool DrawColumnSelect(string content, bool selected = false) {
 		var style = ImGui.GetStyle();
 		var spacing = ImGui.GetItemRectSize().Y - (style.ItemSpacing.Y + style.ItemInnerSpacing.Y) * 2;
-		ImGui.PushStyleVar(
+		using var _style = ImRaii.PushStyle(
 			ImGuiStyleVar.ItemSpacing,
 			ImGui.GetStyle().ItemSpacing with { Y = spacing }
 		);
 		
-		try {
-			ImGui.SetCursorPosY(ImGui.GetCursorPosY() + spacing / 2);
-			return ImGui.Selectable(content, selected);
-		} finally {
-			ImGui.PopStyleVar();
-		}
+		ImGui.SetCursorPosY(ImGui.GetCursorPosY() + spacing / 2);
+		return ImGui.Selectable(content, selected);
 	}
 
 	private void UpdateHover(ObjectInfo info) {

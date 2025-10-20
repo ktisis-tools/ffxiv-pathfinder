@@ -4,7 +4,8 @@ using Dalamud.Interface;
 using Dalamud.Interface.Components;
 using Dalamud.Interface.Windowing;
 
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
+using Dalamud.Interface.Utility.Raii;
 
 using Pathfinder.Config;
 using Pathfinder.Objects;
@@ -79,29 +80,25 @@ public class MainWindow : Window, IDisposable {
 	// Context controls
 
 	private void DrawContextControls(ConfigFile config) {
-		ImGui.BeginGroup();
-		
-		ImGui.Checkbox(
-			config.Overlay.Enabled ? "Overlay enabled" : "Overlay disabled",
-			ref config.Overlay.Enabled
-		);
+		using (ImRaii.Group()) {
+			ImGui.Checkbox(
+				config.Overlay.Enabled ? "Overlay enabled" : "Overlay disabled",
+				ref config.Overlay.Enabled
+			);
 
-		ImGui.SameLine(0, ImGui.GetStyle().ItemSpacing.X);
-		ImGui.PushStyleVar(ImGuiStyleVar.FrameRounding, 180f);
-		if (Buttons.IconButton("##OverlayPopup", FontAwesomeIcon.EllipsisH))
-			ImGui.OpenPopup(OverlayPopupId);
-		ImGui.PopStyleVar();
-		
-		ImGui.SameLine(0, 0);
+			ImGui.SameLine(0, ImGui.GetStyle().ItemSpacing.X);
+			using (ImRaii.PushStyle(ImGuiStyleVar.FrameRounding, 180f))
+				if (Buttons.IconButton("##OverlayPopup", FontAwesomeIcon.EllipsisH))
+					ImGui.OpenPopup(OverlayPopupId);
 
-		const FontAwesomeIcon SettingsIcon = FontAwesomeIcon.Cog;
-		var avail = ImGui.GetCursorPosX() + ImGui.GetContentRegionAvail().X;
-		ImGui.SetCursorPosX(avail - Buttons.CalcIconButtonSize(SettingsIcon).X);
-		if (Buttons.IconButton("##PathfindSettings", SettingsIcon))
-			this._gui.GetWindow<ConfigWindow>().Toggle();
-		
-		ImGui.EndGroup();
-		
+			ImGui.SameLine(0, 0);
+
+			const FontAwesomeIcon SettingsIcon = FontAwesomeIcon.Cog;
+			var avail = ImGui.GetCursorPosX() + ImGui.GetContentRegionAvail().X;
+			ImGui.SetCursorPosX(avail - Buttons.CalcIconButtonSize(SettingsIcon).X);
+			if (Buttons.IconButton("##PathfindSettings", SettingsIcon))
+				this._gui.GetWindow<ConfigWindow>().Toggle();
+		}
 		ImGui.Spacing();
 		this._range.Draw(config);
 	}
@@ -128,21 +125,16 @@ public class MainWindow : Window, IDisposable {
 	// Popups
 
 	private void DrawPopups(ConfigFile config) {
-		ImGui.PushStyleVar(ImGuiStyleVar.PopupRounding, ImGui.GetStyle().WindowRounding);
-		try {
-			this._filters.Draw(FilterPopupId, config);
-			DrawOverlayPopup(config);
-		} finally {
-			ImGui.PopStyleVar();
-		}
+		using var _ = ImRaii.PushStyle(ImGuiStyleVar.PopupRounding, ImGui.GetStyle().WindowRounding);
+		this._filters.Draw(FilterPopupId, config);
+		DrawOverlayPopup(config);
 	}
 
 	private void DrawOverlayPopup(ConfigFile config) {
-		if (!ImGui.BeginPopup(OverlayPopupId)) return;
+		using var popup = ImRaii.Popup(OverlayPopupId);
+		if (!popup) return;
 
 		ImGui.Checkbox("Draw item dots", ref config.Overlay.ItemDot.Draw);
-		
-		ImGui.EndPopup();
 	}
 	
 	// Window close

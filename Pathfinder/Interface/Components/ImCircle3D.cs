@@ -3,7 +3,7 @@ using System.Numerics;
 
 using Dalamud.Plugin.Services;
 
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 
 using Pathfinder.Config.Data;
 using Pathfinder.Services.Core.Attributes;
