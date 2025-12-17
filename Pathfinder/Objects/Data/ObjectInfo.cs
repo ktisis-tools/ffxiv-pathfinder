@@ -7,9 +7,9 @@ using FFXIVClientStructs.FFXIV.Client.System.Resource.Handle;
 
 using Object = FFXIVClientStructs.FFXIV.Client.Graphics.Scene.Object;
 using ModelType = FFXIVClientStructs.FFXIV.Client.Graphics.Scene.CharacterBase.ModelType;
+using VfxObject = Pathfinder.Interop.VfxObject; // TODO: point to CS when viable for non-internal access, or override
 
 using Pathfinder.Config.Data;
-using Pathfinder.Interop;
 using Pathfinder.Interop.Unmanaged;
 
 namespace Pathfinder.Objects.Data;
