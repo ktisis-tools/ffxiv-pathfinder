@@ -13,6 +13,7 @@ internal sealed class DalamudServices {
 	[PluginService] private IChatGui _chat { get; set; } = null!;
 	[PluginService] private IGameGui _gui { get; set; } = null!;
 	[PluginService] private IClientState _state { get; set; } = null!;
+	[PluginService] private IObjectTable _objectTable { get; set; } = null!;
 
 	internal DalamudServices(IDalamudPluginInterface api) {
 		this._api = api;
@@ -26,5 +27,6 @@ internal sealed class DalamudServices {
 		.AddSingleton(this._framework)
 		.AddSingleton(this._chat)
 		.AddSingleton(this._gui)
-		.AddSingleton(this._state);
+		.AddSingleton(this._state)
+		.AddSingleton(this._objectTable);
 }

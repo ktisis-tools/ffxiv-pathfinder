@@ -10,7 +10,7 @@ using Dalamud.Bindings.ImGui;
 
 using Pathfinder.Services.Core.Attributes;
 
-namespace Pathfinder.Services; 
+namespace Pathfinder.Services;
 
 [GlobalService]
 public class PerceptionService {
