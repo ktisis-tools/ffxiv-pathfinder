@@ -5,4 +5,5 @@ public class TableDisplay {
 	public bool DimOnHover = true;
 	
 	public bool ShowAddress;
+	public bool UseDynamis;
 }
