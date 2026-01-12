@@ -29,10 +29,13 @@ public class ResultsTable {
 	private readonly ObjectUiCtx _ctx;
     
 	private readonly PerceptionService _wis;
+
+	private readonly DynamisIpcProvider _dis;
 	
-	public ResultsTable(ObjectUiCtx ctx, PerceptionService wis) {
+	public ResultsTable(ObjectUiCtx ctx, PerceptionService wis, DynamisIpcProvider dis) {
 		this._ctx = ctx;
 		this._wis = wis;
+		this._dis = dis;
 	}
 	
 	// Column wrappers
@@ -151,12 +154,17 @@ public class ResultsTable {
 
 	private void DrawAddress(nint addr) {
 		if (this.DrawColumnSelect(addr.ToString("X")))
+		{
 			this._wis.SetClipboardAddress(addr);
+			this._dis.InpectObject(addr);
+		}
+			
 	}
 
 	private void DrawPath(string path) {
 		if (this.DrawColumnSelect(path))
 			this._wis.SetClipboardPath(path);
+
 	}
 	
 	private bool DrawColumnSelect(string content, bool selected = false) {
