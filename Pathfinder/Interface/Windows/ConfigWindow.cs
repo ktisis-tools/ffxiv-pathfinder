@@ -10,10 +10,11 @@ using Dalamud.Interface.Utility.Raii;
 using Pathfinder.Config;
 using Pathfinder.Config.Data;
 using Pathfinder.Interface.Widgets;
+using Pathfinder.Interop;
 using Pathfinder.Services;
 using Pathfinder.Services.Core.Attributes;
 
-namespace Pathfinder.Interface.Windows; 
+namespace Pathfinder.Interface.Windows;
 
 [LocalService]
 public class ConfigWindow : Window {
@@ -141,6 +142,14 @@ public class ConfigWindow : Window {
 
 		ImGui.Checkbox("Dim table when hovering dot", ref cfg.Table.DimOnHover);
 		
+		ImGui.Spacing();
+
+		using (var _combo = ImRaii.Combo("Highlight color when hovering", Enum.GetName(cfg.Table.HighlightOnHover)))
+			if (_combo.Success)
+				foreach (var color in Enum.GetValues<OutlineChoice>())
+					if (ImGui.Selectable(Enum.GetName(color), color == cfg.Table.HighlightOnHover))
+						cfg.Table.HighlightOnHover = color;
+
 		ImGui.Spacing();
 		
 		ImGui.Text("Objects:");
