@@ -27,12 +27,13 @@ public class ResultsTable {
 	// Constructor
 
 	private readonly ObjectUiCtx _ctx;
-    
 	private readonly PerceptionService _wis;
+	private readonly DynamisIpcProvider _dip;
 	
-	public ResultsTable(ObjectUiCtx ctx, PerceptionService wis) {
+	public ResultsTable(ObjectUiCtx ctx, PerceptionService wis, DynamisIpcProvider dip) {
 		this._ctx = ctx;
 		this._wis = wis;
+		this._dip = dip;
 	}
 	
 	// Column wrappers
@@ -67,6 +68,7 @@ public class ResultsTable {
 
 	private void DrawObjectEntry(ConfigFile config, ObjectInfo info) {
 		var showAddress = config.Table.ShowAddress;
+		var useDynamis = config.Table.UseDynamis;
 		var useColors = config.Table.UseColors;
 		
 		ImGui.TableNextRow();
@@ -91,18 +93,18 @@ public class ResultsTable {
 
 			if (showAddress) {
 				this.SetColumnIndex(Column.Address);
-				this.DrawAddress(info.Address);
+				this.DrawAddress(info.Address, useDynamis);
 			}
 
 			this.SetColumnIndex(Column.Paths);
-			this.DrawObjectPaths(info, showAddress);
+			this.DrawObjectPaths(info, showAddress, useDynamis);
 		} finally {
 			if (useColors) ImGui.PopStyleColor();
 			if (dim) ImGui.PopStyleColor();
 		}
 	}
 
-	private void DrawObjectPaths(ObjectInfo info, bool showAddress = false) {
+	private void DrawObjectPaths(ObjectInfo info, bool showAddress = false, bool useDynamis = false) {
 		var count = info.Models.Count;
 		if (count > 1) {
 			ImGui.PushID($"Object_{info.Address:X}");
@@ -118,7 +120,7 @@ public class ResultsTable {
 			
 			this.UpdateHover(info);
 				
-			if (isExpand) DrawModelList(info, showAddress);
+			if (isExpand) DrawModelList(info, showAddress, useDynamis);
 		} else {
 			var text = info.Models.FirstOrDefault()?.Path ?? string.Empty;
 			this.DrawPath(text);
@@ -126,7 +128,7 @@ public class ResultsTable {
 		}
 	}
 
-	private void DrawModelList(ObjectInfo info, bool showAddress = false) {
+	private void DrawModelList(ObjectInfo info, bool showAddress = false, bool useDynamis = false) {
 		var dim = Helpers.DimColor(ImGuiCol.Text, 0.80f);
 		foreach (var mdl in info.Models) {
 			ImGui.TableNextRow();
@@ -136,7 +138,7 @@ public class ResultsTable {
 
 			if (showAddress) {
 				this.SetColumnIndex(Column.Address);
-				this.DrawAddress(mdl.Address);
+				this.DrawAddress(mdl.Address, useDynamis);
 			}
 
 			this.SetColumnIndex(Column.Paths);
@@ -149,9 +151,16 @@ public class ResultsTable {
 		if (dim) ImGui.PopStyleColor(1);
 	}
 
-	private void DrawAddress(nint addr) {
-		if (this.DrawColumnSelect(addr.ToString("X")))
-			this._wis.SetClipboardAddress(addr);
+	private void DrawAddress(nint addr, bool useDynamis = false) {
+		if (useDynamis && this._dip.Available) {
+			if (this.DrawColumnSelect(addr.ToString("X")))
+				this._dip.OpenMenu(addr, "the pointerrrrrr");
+			else if (ImGui.IsWindowHovered() && ImGui.IsMouseHoveringRect(ImGui.GetItemRectMin(), ImGui.GetItemRectMax()))
+				using (ImRaii.Tooltip()) this._dip.DrawTooltip(addr);
+		} else {
+			if (this.DrawColumnSelect(addr.ToString("X")))
+				this._wis.SetClipboardAddress(addr);
+		}
 	}
 
 	private void DrawPath(string path) {
