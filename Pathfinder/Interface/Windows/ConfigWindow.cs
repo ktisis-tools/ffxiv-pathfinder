@@ -10,18 +10,25 @@ using Dalamud.Interface.Utility.Raii;
 using Pathfinder.Config;
 using Pathfinder.Config.Data;
 using Pathfinder.Interface.Widgets;
+using Pathfinder.Interop;
+using Pathfinder.Services;
 using Pathfinder.Services.Core.Attributes;
 
-namespace Pathfinder.Interface.Windows; 
+namespace Pathfinder.Interface.Windows;
 
 [LocalService]
 public class ConfigWindow : Window {
 	// Constructor
 
 	private readonly ConfigService _cfg;
+	private readonly DynamisIpcProvider _dip;
 
-	public ConfigWindow(ConfigService _cfg) : base("Pathfinder Settings") {
-		this._cfg = _cfg;
+	public ConfigWindow(
+		ConfigService cfg,
+		DynamisIpcProvider dip
+	) : base("Pathfinder Settings") {
+		this._cfg = cfg;
+		this._dip = dip;
 	}
 	
 	// Draw UI
@@ -136,6 +143,14 @@ public class ConfigWindow : Window {
 		ImGui.Checkbox("Dim table when hovering dot", ref cfg.Table.DimOnHover);
 		
 		ImGui.Spacing();
+
+		using (var _combo = ImRaii.Combo("Highlight color when hovering", Enum.GetName(cfg.Table.HighlightOnHover)))
+			if (_combo.Success)
+				foreach (var color in Enum.GetValues<OutlineChoice>())
+					if (ImGui.Selectable(Enum.GetName(color), color == cfg.Table.HighlightOnHover))
+						cfg.Table.HighlightOnHover = color;
+
+		ImGui.Spacing();
 		
 		ImGui.Text("Objects:");
 		DrawColor(cfg, WorldObjectType.Terrain);
@@ -180,5 +195,13 @@ public class ConfigWindow : Window {
 		ImGui.Checkbox("Developer Mode", ref cfg.Table.ShowAddress);
 		ImGui.SameLine();
 		Helpers.Hint("When enabled, displays memory addresses for objects in the results table.");
+		if (!cfg.Table.ShowAddress) return;
+
+		ImGui.Spacing();
+		using (ImRaii.Disabled(!this._dip.Available))
+			ImGui.Checkbox("Dynamis IPC", ref cfg.Table.UseDynamis);
+
+		ImGui.SameLine();
+		Helpers.Hint("When enabled, embeds Dynamis-compatible address links instead of only copyable text.");
 	}
 }
