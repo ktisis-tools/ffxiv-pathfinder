@@ -1,5 +1,5 @@
 # FFXIV Pathfinder
-[![discord](https://img.shields.io/discord/975894364020686878)](https://discord.gg/ktisis)
+[![discord](https://img.shields.io/discord/975894364020686878)](https://discord.gg/kUG3W8B8Ny)
 
 *Visualizer for nearby model paths. Adds +5 to perception.*
 
@@ -7,7 +7,9 @@ Pathfinder is a tool for visually locating any model path in the game world.
 
 This is an early testing version with some features still pending implementation, including but not limited to:
 - TMB/PAP paths
-- VFX and SFX paths
+- non-world VFX paths
+- SFX paths
+- MTRL/TEX paths for MDLs
 
 ## Installation
 
