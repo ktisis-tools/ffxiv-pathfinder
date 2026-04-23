@@ -154,7 +154,7 @@ public class ResultsTable {
 	private void DrawAddress(nint addr, bool useDynamis = false) {
 		if (useDynamis && this._dip.Available) {
 			if (this.DrawColumnSelect(addr.ToString("X")))
-				this._dip.OpenMenu(addr, "the pointerrrrrr");
+				this._dip.OpenMenu(addr, "Pathfinder Object");
 			else if (ImGui.IsWindowHovered() && ImGui.IsMouseHoveringRect(ImGui.GetItemRectMin(), ImGui.GetItemRectMax()))
 				using (ImRaii.Tooltip()) this._dip.DrawTooltip(addr);
 		} else {

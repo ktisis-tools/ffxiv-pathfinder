@@ -46,11 +46,14 @@ public class ObjectUiCtx {
 	}
 
 	private unsafe void UpdateHoveredHighlight(bool state) {
+		var colorPref = this._cfg.Get().Table.HighlightOnHover;
+		if (colorPref == OutlineChoice.None) return;
+
 		var drawObject = (DrawObject*)this._hover?.Address;
 		if (drawObject == null) return;
 
 		if (state)
-			drawObject->OutlineFlags = this._cfg.Get().Table.HighlightOnHover;
+			drawObject->OutlineFlags = colorPref;
 		else
 			drawObject->OutlineFlags = OutlineChoice.None;
 	}
