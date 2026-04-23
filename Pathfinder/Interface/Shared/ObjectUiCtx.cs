@@ -49,7 +49,8 @@ public class ObjectUiCtx {
 		var colorPref = this._cfg.Get().Table.HighlightOnHover;
 		if (colorPref == OutlineChoice.None) return;
 
-		var drawObject = (DrawObject*)this._hover?.Address;
+		if (this._hover == null) return;
+		var drawObject = (DrawObject*)this._hover.Address;
 		if (drawObject == null) return;
 
 		if (state)
