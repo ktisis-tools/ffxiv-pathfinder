@@ -1,7 +1,7 @@
 <Project Sdk="Dalamud.NET.Sdk/15.0.0">
 	<PropertyGroup>
 		<Authors>Chirp + Bwuny</Authors>
-		<Version>0.1.7</Version>
+		<Version>0.1.7.1</Version>
 		<Product>FFXIV Pathfinder</Product>
 		<PackageProjectUrl>https://github.com/ktisis-tools/ffxiv-pathfinder</PackageProjectUrl>
 	</PropertyGroup>
@@ -12,31 +12,13 @@
         <InternalName>Pathfinder</InternalName>
         <Punchline>Visualizer for nearby model paths. Adds +5 to perception.</Punchline>
         <Description>A tool for visually locating any model path in the game world.</Description>
-        <AssemblyVersion>0.1.7</AssemblyVersion>
+        <AssemblyVersion>0.1.7.1</AssemblyVersion>
         <RepoUrl>https://github.com/ktisis-tools/ffxiv-pathfinder</RepoUrl>
         <IconUrl>https://raw.githubusercontent.com/ktisis-tools/ffxiv-pathfinder/main/icon.png</IconUrl>
         <ApplicableVersion>any</ApplicableVersion>
         <Tags>pathfinder;resources;models;paths;mdl;vfx</Tags>
-        <DalamudApiLevel>15</DalamudApiLevel>
-        <TestingDalamudApiLevel>15</TestingDalamudApiLevel>
         <AcceptsFeedback>true</AcceptsFeedback>
     </PropertyGroup>
-
-	<PropertyGroup>
-		<TargetFramework>net10.0-windows</TargetFramework>
-		<Platforms>x64</Platforms>
-		<Nullable>enable</Nullable>
-		<LangVersion>latest</LangVersion>
-		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-		<ProduceReferenceAssembly>false</ProduceReferenceAssembly>
-		<RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
-		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(OS)' != 'Windows_NT' OR '$(CI)' == 'true'">
-		<DalamudLibPath>$(DALAMUD_HOME)/</DalamudLibPath>
-	</PropertyGroup>
 
 	<ItemGroup>
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
